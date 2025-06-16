@@ -2,12 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import * as Tone from "tone";
 import { melody } from "./data/melodyData";
 
-const notes = [
-  "C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3",
-  "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4",
-  "C5", "C#5", "D5", "D#5", "E5", "F5", "F#5", "G5", "G#5", "A5", "A#5", "B5",
-];
-
 const whiteNotes = [
   "C3", "D3", "E3", "F3", "G3", "A3", "B3",
   "C4", "D4", "E4", "F4", "G4", "A4", "B4",
@@ -15,38 +9,39 @@ const whiteNotes = [
 ];
 
 const hasSharpRight = {
-  C: true,
-  D: true,
-  E: false,
-  F: true,
-  G: true,
-  A: true,
-  B: false,
+  C: true, D: true, E: false,
+  F: true, G: true, A: true, B: false,
 };
 
-const keyWidth = 40;
-const blackKeyWidth = 28;
+const blackKeyWidthRatio = 0.7;
 const blackKeyHeight = 110;
 const whiteKeyHeight = 180;
 
 const noteNamesRu = {
-  C: "Do",
-  D: "Re",
-  E: "Mi",
-  F: "Fa",
-  G: "Sol",
-  A: "La",
-  B: "Si",
+  C: "Do", D: "Re", E: "Mi", F: "Fa", G: "Sol", A: "La", B: "Si",
 };
 
 const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
   const synth = useRef(null);
   const [showLabels, setShowLabels] = useState(true);
   const [useSolfege, setUseSolfege] = useState(false);
+  const [keyWidth, setKeyWidth] = useState(40); // dynamic width
 
   useEffect(() => {
     synth.current = new Tone.Synth().toDestination();
     return () => synth.current.dispose();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth * 0.95;
+      const newKeyWidth = screenWidth / whiteNotes.length;
+      setKeyWidth(Math.min(newKeyWidth, 40));
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const playNote = (note) => {
@@ -109,78 +104,86 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
         )}
       </div>
 
-      <div 
+      <div
         style={{
-          position: "relative",
-          width: keyWidth * whiteNotes.length,
-          height: whiteKeyHeight,
-          margin: "0 auto",
-          userSelect: "none",
+         
+          whiteSpace: "nowrap",
+          width: "100%",
         }}
       >
-        {whiteNotes.map((note, i) => (
-          <div
-            key={note}
-            data-note={note}
-            onMouseDown={() => playNote(note)}
-            onTouchStart={() => playNote(note)}
-            style={{
-              width: keyWidth,
-              height: whiteKeyHeight,
-              border: "1px solid black",
-              backgroundColor: "white",
-              display: "inline-block",
-              position: "relative",
-              boxSizing: "border-box",
-              userSelect: "none",
-            }}
-          >
-            {showLabels && (
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 5,
-                  width: "100%",
-                  textAlign: "center",
-                  fontSize: 12,
-                  color: "black",
-                  userSelect: "none",
-                }}
-              >
-                {getLabel(note)}
-              </div>
-            )}
-          </div>
-        ))}
-
-        {whiteNotes.map((note, i) => {
-          const noteName = note.slice(0, -1);
-          const octave = note.slice(-1);
-          if (!hasSharpRight[noteName]) return null;
-          const blackNote = `${noteName}#${octave}`;
-
-          return (
+        <div
+          style={{
+            position: "relative",
+            width: keyWidth * whiteNotes.length,
+            height: whiteKeyHeight,
+            margin: "0 auto",
+            userSelect: "none",
+          }}
+        >
+          {whiteNotes.map((note, i) => (
             <div
-              key={blackNote}
-              data-note={blackNote}
-              onMouseDown={() => playNote(blackNote)}
-              onTouchStart={() => playNote(blackNote)}
+              key={note}
+              data-note={note}
+              onMouseDown={() => playNote(note)}
+              onTouchStart={() => playNote(note)}
               style={{
-                position: "absolute",
-                left: keyWidth * (i + 1) - blackKeyWidth / 2,
-                width: blackKeyWidth,
-                height: blackKeyHeight,
-                backgroundColor: "black",
-                borderRadius: "0 0 3px 3px",
-                border: "1px solid #333",
-                top: 0,
-                zIndex: 2,
-                cursor: "pointer",
+                width: keyWidth,
+                height: whiteKeyHeight,
+                border: "1px solid black",
+                backgroundColor: "white",
+                display: "inline-block",
+                position: "relative",
+                boxSizing: "border-box",
                 userSelect: "none",
               }}
-            />
-          );
-        })}
+            >
+              {showLabels && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 5,
+                    width: "100%",
+                    textAlign: "center",
+                    fontSize: 12,
+                    color: "black",
+                    userSelect: "none",
+                  }}
+                >
+                  {getLabel(note)}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {whiteNotes.map((note, i) => {
+            const noteName = note.slice(0, -1);
+            const octave = note.slice(-1);
+            if (!hasSharpRight[noteName]) return null;
+            const blackNote = `${noteName}#${octave}`;
+
+            return (
+              <div
+                key={blackNote}
+                data-note={blackNote}
+                onMouseDown={() => playNote(blackNote)}
+                onTouchStart={() => playNote(blackNote)}
+                style={{
+                  position: "absolute",
+                  left: keyWidth * (i + 1) - (keyWidth * blackKeyWidthRatio) / 2,
+                  width: keyWidth * blackKeyWidthRatio,
+                  height: blackKeyHeight,
+                  backgroundColor: "black",
+                  borderRadius: "0 0 3px 3px",
+                  border: "1px solid #333",
+                  top: 0,
+                  zIndex: 2,
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );
