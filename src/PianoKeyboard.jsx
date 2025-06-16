@@ -2,54 +2,47 @@ import { useEffect, useRef, useState } from "react";
 import * as Tone from "tone";
 import { melody } from "./data/melodyData";
 
-const fullRange = [
+const notes = [
   "C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3",
   "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4",
   "C5", "C#5", "D5", "D#5", "E5", "F5", "F#5", "G5", "G#5", "A5", "A#5", "B5",
 ];
 
-const mobileRange = [
-  "G3", "G#3", "A3", "A#3", "B3",
-  "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4",
-  "A4", "A#4", "B4", "C5", "C#5", "D5", "D#5", "E5",
+const whiteNotes = [
+  "C3", "D3", "E3", "F3", "G3", "A3", "B3",
+  "C4", "D4", "E4", "F4", "G4", "A4", "B4",
+  "C5", "D5", "E5", "F5", "G5", "A5", "B5",
 ];
 
 const hasSharpRight = {
-  C: true, D: true, E: false, F: true, G: true, A: true, B: false,
+  C: true,
+  D: true,
+  E: false,
+  F: true,
+  G: true,
+  A: true,
+  B: false,
 };
 
+const keyWidth = 40;
+const blackKeyWidth = 28;
+const blackKeyHeight = 110;
+const whiteKeyHeight = 180;
+
 const noteNamesRu = {
-  C: "Do", D: "Re", E: "Mi", F: "Fa", G: "Sol", A: "La", B: "Si",
+  C: "Do",
+  D: "Re",
+  E: "Mi",
+  F: "Fa",
+  G: "Sol",
+  A: "La",
+  B: "Si",
 };
 
 const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
   const synth = useRef(null);
   const [showLabels, setShowLabels] = useState(true);
   const [useSolfege, setUseSolfege] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 840);
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth < 540);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 840);
-      setIsSmallMobile(window.innerWidth < 540);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Размеры клавиш в зависимости от экрана
-  const keyWidth = isSmallMobile ? 23 : 40;
-  const blackKeyWidth = isSmallMobile ? Math.floor(23 * 0.7) : 28;
-  const whiteKeyHeight = isSmallMobile ? 130 : 180;
-  const blackKeyHeight = isSmallMobile ? 80 : 110;
-
-  const activeNotes = isMobile ? mobileRange : fullRange;
-
-  // Обрезаем белые клавиши до 13 на маленьких экранах
-  const whiteNotesFull = activeNotes.filter((n) => !n.includes("#"));
-  const whiteNotes = isSmallMobile ? whiteNotesFull.slice(0, 13) : whiteNotesFull;
-  const blackNotes = activeNotes.filter((n) => n.includes("#"));
 
   useEffect(() => {
     synth.current = new Tone.Synth().toDestination();
@@ -69,6 +62,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
     const expectedNote = expected.note;
     if (pressedNote === expectedNote) {
       highlightKey(pressedNote, "green");
+
       let nextMeasure = measure;
       let nextNote = noteIndex + 1;
 
@@ -110,23 +104,21 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
         </button>
         {showLabels && (
           <button onClick={() => setUseSolfege(!useSolfege)} style={{ marginLeft: 10 }}>
-            {useSolfege ? "🔘 A–B–C" : "🔘 Do–Re–Mi"}
+            {useSolfege ? "🔘 Switch to A–B–C" : "🔘 Switch to Do–Re–Mi"}
           </button>
         )}
       </div>
 
-      <div
+      <div   
         style={{
           position: "relative",
-          width: whiteNotes.length * keyWidth,
-          maxWidth: "100%",
+          width: keyWidth * whiteNotes.length,
           height: whiteKeyHeight,
           margin: "0 auto",
           userSelect: "none",
-          touchAction: "none",
         }}
       >
-        {whiteNotes.map((note) => (
+        {whiteNotes.map((note, i) => (
           <div
             key={note}
             data-note={note}
@@ -165,9 +157,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
           const noteName = note.slice(0, -1);
           const octave = note.slice(-1);
           if (!hasSharpRight[noteName]) return null;
-
           const blackNote = `${noteName}#${octave}`;
-          if (!blackNotes.includes(blackNote)) return null;
 
           return (
             <div
