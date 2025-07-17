@@ -2,7 +2,12 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 
 }
-
+.paragraph {
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+  margin-top: 20px;
+}
 
 body {
   margin: 0;

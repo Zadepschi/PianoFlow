@@ -3,12 +3,14 @@ import NoteStaff from "./NoteStaff";
 import PianoKeyboard from "./PianoKeyboard";
 import HornerMelody from "./HornerMelody";
 
+
 function App() {
   const [mode, setMode] = useState(1);
   const [currentNote, setCurrentNote] = useState({ measure: 0, note: 0 });
 
   return (
     <div className="container">
+      <p className="paragraph">The mobile version of the project is under development.</p>
       <h1>PianoFlow</h1>
 
       <div className="mode-buttons">
