@@ -46,6 +46,29 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
   const [whiteNotesToShow, setWhiteNotesToShow] = useState(fullWhiteNotes);
   const [isRotated, setIsRotated] = useState(false);
 
+  // Разблокировка аудио контекста при первом взаимодействии
+  useEffect(() => {
+    const unlockAudio = async () => {
+      try {
+        await Tone.start();
+        console.log("Audio context unlocked");
+        document.removeEventListener("touchstart", unlockAudio);
+        document.removeEventListener("mousedown", unlockAudio);
+      } catch (e) {
+        console.warn("Tone.js unlock failed", e);
+      }
+    };
+
+    document.addEventListener("touchstart", unlockAudio, { once: true });
+    document.addEventListener("mousedown", unlockAudio, { once: true });
+
+    return () => {
+      document.removeEventListener("touchstart", unlockAudio);
+      document.removeEventListener("mousedown", unlockAudio);
+    };
+  }, []);
+
+  // Обработка поворота экрана
   useEffect(() => {
     const handleResize = () => {
       setIsRotated(window.innerWidth < 665);
@@ -56,11 +79,13 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Создание и очистка синтезатора
   useEffect(() => {
     synth.current = new Tone.Synth().toDestination();
     return () => synth.current.dispose();
   }, []);
 
+  // Адаптация количества белых клавиш под ширину экрана
   useEffect(() => {
     const updateSize = () => {
       if (window.innerWidth < 858) {
@@ -223,6 +248,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
               position: "relative",
               boxSizing: "border-box",
               userSelect: "none",
+              cursor: "pointer",
             }}
           >
             {showLabels && (
