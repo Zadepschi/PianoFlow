@@ -150,7 +150,7 @@ const NoteStaff = ({ highlight }) => {
         onClick={playMelody}
         disabled={isPlaying}
       >
-        ▶️ Listen
+        🔊 Listen
       </button>
       <div ref={containerRef}></div>
     </div>

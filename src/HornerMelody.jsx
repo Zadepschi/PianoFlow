@@ -212,7 +212,7 @@ const HornerMelody = ({ onPlayNote }) => {
       <button className="playButton"
        onClick={playMelody} 
        disabled={isPlaying}>
-        ▶️ Listen
+        🔊 Listen
       </button>
       <div ref={containerRef}></div>
     </div>

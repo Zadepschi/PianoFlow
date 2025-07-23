@@ -211,7 +211,8 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
   }
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div className="block"
+    style={{ textAlign: "center" }}>
       <div style={{ marginBottom: 10 }}>
         <button onClick={() => setShowLabels(!showLabels)}>
           {showLabels ? "🎵 Notes OFF" : "🎵 Notes ON"}
@@ -224,7 +225,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
       </div>
 
       <div
-        className="white-key"
+      
         style={{
           position: "relative",
           width: keyWidth * whiteNotesToShow.length,
