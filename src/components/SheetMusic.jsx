@@ -8,20 +8,20 @@ const SheetMusic = () => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext('2d');
       
-      // Create a renderer
+    
       const renderer = new VexFlow.Renderer(ctx, VexFlow.Renderer.Backends.CANVAS);
       renderer.resize(500, 200);
       
-      // Create a context
+    
       const context = renderer.getContext();
       
-      // Create a stave
+    
       const stave = new VexFlow.Stave(10, 40, 400);
       stave.addClef('treble');
       stave.addTimeSignature('4/4');
       stave.setContext(context).draw();
       
-      // Create notes
+    
       const notes = [
         new VexFlow.StaveNote({
           clef: 'treble',
@@ -35,7 +35,7 @@ const SheetMusic = () => {
         })
       ];
       
-      // Create and format voice
+   
       const voice = new VexFlow.Voice({
         num_beats: 4,
         beat_value: 4
@@ -44,7 +44,7 @@ const SheetMusic = () => {
       voice.addTickables(notes);
       new VexFlow.Formatter().joinVoices([voice]).formatToStave([voice], stave);
       
-      // Draw notes
+
       voice.draw(context, stave);
     }
   }, []);

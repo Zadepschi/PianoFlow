@@ -2,17 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import * as Tone from "tone";
 import { melody } from "./data/melodyData";
 
-
-const notes = [
-  "C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3",
-  "C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4",
-  "C5", "C#5", "D5", "D#5", "E5", "F5", "F#5", "G5", "G#5", "A5", "A#5", "B5",
-];
-
-const whiteNotes = [
+const fullWhiteNotes = [
   "C3", "D3", "E3", "F3", "G3", "A3", "B3",
   "C4", "D4", "E4", "F4", "G4", "A4", "B4",
   "C5", "D5", "E5", "F5", "G5", "A5", "B5",
+];
+
+const reducedWhiteNotes = [
+  "F3", "G3", "A3", "B3",
+  "C4", "D4", "E4", "F4", "G4", "A4", "B4",
+  "C5", "D5", "E5",
 ];
 
 const hasSharpRight = {
@@ -44,10 +43,36 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
   const synth = useRef(null);
   const [showLabels, setShowLabels] = useState(true);
   const [useSolfege, setUseSolfege] = useState(false);
+  const [whiteNotesToShow, setWhiteNotesToShow] = useState(fullWhiteNotes);
+  const [isRotated, setIsRotated] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsRotated(window.innerWidth < 665);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     synth.current = new Tone.Synth().toDestination();
     return () => synth.current.dispose();
+  }, []);
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (window.innerWidth < 858) {
+        setWhiteNotesToShow(reducedWhiteNotes);
+      } else {
+        setWhiteNotesToShow(fullWhiteNotes);
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
   }, []);
 
   const playNote = (note) => {
@@ -97,6 +122,69 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
     return useSolfege ? noteNamesRu[noteLetter] : note;
   };
 
+  if (isRotated) {
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#111",
+          color: "white",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: 9999,
+          padding: "20px",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ marginBottom: 20 }}>
+          <div
+            style={{
+              width: 60,
+              height: 100,
+              border: "3px solid white",
+              borderRadius: 12,
+              margin: "0 auto",
+              position: "relative",
+              animation: "rotateIcon 2s infinite linear",
+            }}
+          >
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                backgroundColor: "white",
+                borderRadius: "50%",
+                position: "absolute",
+                bottom: 6,
+                left: "50%",
+                transform: "translateX(-50%)",
+              }}
+            />
+          </div>
+        </div>
+        <p style={{ fontSize: 20, marginBottom: 8 }}>📱 Rotate the device</p>
+        <p style={{ fontSize: 14, opacity: 0.8 }}>rotate the device to play the piano</p>
+        <style>
+          {`
+            @keyframes rotateIcon {
+              0% { transform: rotate(0deg); }
+              25% { transform: rotate(20deg); }
+              50% { transform: rotate(0deg); }
+              75% { transform: rotate(-20deg); }
+              100% { transform: rotate(0deg); }
+            }
+          `}
+        </style>
+      </div>
+    );
+  }
+
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{ marginBottom: 10 }}>
@@ -110,16 +198,17 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
         )}
       </div>
 
-      <div   
+      <div
+        className="white-key"
         style={{
           position: "relative",
-          width: keyWidth * whiteNotes.length,
+          width: keyWidth * whiteNotesToShow.length,
           height: whiteKeyHeight,
           margin: "0 auto",
           userSelect: "none",
         }}
       >
-        {whiteNotes.map((note, i) => (
+        {whiteNotesToShow.map((note, i) => (
           <div
             key={note}
             data-note={note}
@@ -154,7 +243,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
           </div>
         ))}
 
-        {whiteNotes.map((note, i) => {
+        {whiteNotesToShow.map((note, i) => {
           const noteName = note.slice(0, -1);
           const octave = note.slice(-1);
           if (!hasSharpRight[noteName]) return null;

@@ -6,10 +6,10 @@ const PianoKeyboard = () => {
   const synth = useRef(null);
 
   useEffect(() => {
-    // Initialize synth
+ 
     synth.current = new Tone.PolySynth().toDestination();
     return () => {
-      // Cleanup when component unmounts
+    
       if (synth.current) {
         synth.current.dispose();
       }
