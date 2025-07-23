@@ -107,19 +107,19 @@ const NoteStaff = ({ highlight }) => {
       time += Tone.Time(duration).toSeconds();
     };
 
-    // Меры до репризы (0–3)
+    
     for (let i = 0; i < 4; i++) {
       melody[i].forEach((n, ni) => playNote(n.note, n.duration, i, ni));
     }
 
-    // Реприза: меры 4–7 (2 раза)
+ 
     for (let repeat = 0; repeat < 2; repeat++) {
       for (let i = 4; i <= 7; i++) {
         melody[i].forEach((n, ni) => playNote(n.note, n.duration, i, ni));
       }
     }
 
-    // После репризы
+  
     for (let i = 8; i < melody.length; i++) {
       melody[i].forEach((n, ni) => playNote(n.note, n.duration, i, ni));
     }
@@ -137,7 +137,7 @@ const NoteStaff = ({ highlight }) => {
 
   useEffect(() => {
     return () => {
-      // Очистить все таймеры при размонтировании
+     
       timeoutsRef.current.forEach(clearTimeout);
       timeoutsRef.current = [];
       setIsPlaying(false);

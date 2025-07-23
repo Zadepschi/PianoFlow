@@ -16,12 +16,12 @@ function App() {
       setCanShowHorner(width >= 1182);
     };
 
-    handleResize(); // Проверить при первом рендере
+    handleResize(); 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ⚠️ Защита от режима 3, если ширина стала < 1182
+  
   useEffect(() => {
     if (!canShowHorner && mode === 3) {
       setMode(1);

@@ -166,7 +166,7 @@ const HornerMelody = ({ onPlayNote }) => {
     }
   };
 
-  // подключение внешнего onKeyPress
+ 
   useEffect(() => {
     if (onPlayNote) {
       onPlayNote(handleKeyPress);

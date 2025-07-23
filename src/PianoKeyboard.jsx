@@ -46,7 +46,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
   const [whiteNotesToShow, setWhiteNotesToShow] = useState(fullWhiteNotes);
   const [isRotated, setIsRotated] = useState(false);
 
-  // Разблокировка аудио контекста при первом взаимодействии
+ 
   useEffect(() => {
     const unlockAudio = async () => {
       try {
@@ -68,7 +68,7 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
     };
   }, []);
 
-  // Обработка поворота экрана
+ 
   useEffect(() => {
     const handleResize = () => {
       setIsRotated(window.innerWidth < 665);
@@ -79,13 +79,13 @@ const PianoKeyboard = ({ currentNote, setCurrentNote }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Создание и очистка синтезатора
+  
   useEffect(() => {
     synth.current = new Tone.Synth().toDestination();
     return () => synth.current.dispose();
   }, []);
 
-  // Адаптация количества белых клавиш под ширину экрана
+
   useEffect(() => {
     const updateSize = () => {
       if (window.innerWidth < 858) {

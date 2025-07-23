@@ -2,7 +2,7 @@
 // Мелодия "Horner"
 
 export const hornerMelody = [
-  // Первая строка
+ 
   [{ note: "C4", duration: "16n" }, { note: "D4", duration: "16n" }],
   [
     { note: "E4", duration: "4n" }, { note: "F4", duration: "16n" },
@@ -28,7 +28,7 @@ export const hornerMelody = [
     { note: "D4", duration: "2n" }
   ],
 
-  // Вторая строка
+  
   [
     { note: "C4", duration: "8n." }, { note: "C4", duration: "16n" },
     { note: "C4", duration: "8n" }, { note: "C4", duration: "8n" },
@@ -50,7 +50,7 @@ export const hornerMelody = [
     { note: "G3", duration: "1n" }
   ],
 
-  // Третья строка
+  
   [
     { note: "C4", duration: "2n" }, { note: "D4", duration: "4n." },
     { note: "G3", duration: "8n" }
